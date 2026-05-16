@@ -1,0 +1,6 @@
+account_owner,email,role,receives_individual_digest,receives_team_summary,cc_email
+Jina,jina@example.com,sales_manager,true,false,
+Min,min@example.com,sales_manager,true,false,
+Yuna,yuna@example.com,sales_manager,true,false,
+Sales Lead,saleslead@example.com,sales_leader,false,true,
+Marketing,marketing@example.com,marketing,false,true,

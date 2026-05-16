@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WGSN Sales Intelligence MVP</title>
+  <style>
+    :root {
+      --ink: #1f2933;
+      --muted: #607080;
+      --line: #dde4ea;
+      --soft: #f5f7f9;
+      --white: #ffffff;
+      --teal: #0f766e;
+      --blue: #2563eb;
+      --rose: #be123c;
+      --amber: #b45309;
+      --green: #15803d;
+      --navy: #233043;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #eef2f5;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+    }
+
+    aside {
+      background: var(--navy);
+      color: var(--white);
+      padding: 24px 18px;
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .sub {
+      color: #bdc8d4;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    .nav button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #dbe4ee;
+      text-align: left;
+      padding: 12px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+
+    .nav button.active {
+      background: #34445b;
+      color: #ffffff;
+    }
+
+    main {
+      padding: 26px;
+      overflow: auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 26px;
+      letter-spacing: 0;
+    }
+
+    .caption {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    select, input {
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--ink);
+      min-width: 170px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 300px;
+    }
+
+    .row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .company {
+      font-size: 18px;
+      font-weight: 750;
+      line-height: 1.3;
+    }
+
+    .tagline {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .score {
+      min-width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      font-weight: 800;
+    }
+
+    .high { background: var(--green); }
+    .mid { background: var(--blue); }
+    .watch { background: var(--amber); }
+
+    .pillrow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: #405060;
+      font-size: 12px;
+      border: 1px solid var(--line);
+    }
+
+    .section-title {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-bottom: 5px;
+    }
+
+    .bodytext {
+      font-size: 14px;
+      line-height: 1.55;
+      color: #344150;
+      margin: 0;
+    }
+
+    .action {
+      margin-top: auto;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .cta {
+      border: 0;
+      border-radius: 8px;
+      background: var(--ink);
+      color: var(--white);
+      padding: 10px 12px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .ghost {
+      background: var(--white);
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .table th, .table td {
+      padding: 13px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    .table th {
+      background: #f7f9fb;
+      color: #405060;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .empty {
+      padding: 36px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .steps {
+      display: grid;
+      gap: 10px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      gap: 10px;
+      align-items: start;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfd;
+    }
+
+    .stepnum {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      background: var(--teal);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .status {
+      font-size: 12px;
+      border-radius: 999px;
+      padding: 5px 8px;
+      background: #e8f5ef;
+      color: var(--green);
+      white-space: nowrap;
+    }
+
+    .status.needs {
+      background: #fff7ed;
+      color: var(--amber);
+    }
+
+    .config-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .config-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    .config-item:last-child {
+      border-bottom: 0;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: #334155;
+    }
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+
+      .nav {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+      }
+
+      .nav button {
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .grid, .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      main {
+        padding: 18px;
+      }
+
+      .topbar {
+        display: grid;
+      }
+
+      .filters {
+        justify-content: stretch;
+      }
+
+      select, input {
+        width: 100%;
+      }
+
+      .grid, .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      .step {
+        grid-template-columns: 30px 1fr;
+      }
+
+      .status {
+        grid-column: 2;
+        width: fit-content;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">Sales Intelligence</div>
+      <div class="sub">WGSN형 고가 구독/컨설팅 영업을 위한 계정 추천, 재구독 신호, 담당자 매칭 대시보드</div>
+      <div class="nav" aria-label="화면 이동">
+        <button class="active" data-view="recommend">이번 달 추천</button>
+        <button data-view="lookalike">유사 기업 발굴</button>
+        <button data-view="winback">재구독 기회</button>
+        <button data-view="contacts">담당자 매칭</button>
+        <button data-view="automation">자동 신호 수집</button>
+      </div>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <div>
+          <h1 id="pageTitle">이번 달 추천</h1>
+          <div class="caption" id="pageCaption">점수와 컨택 가능성을 기준으로 이번 달 우선 연락할 기업을 정렬했습니다.</div>
+        </div>
+        <div class="filters">
+          <select id="industryFilter" aria-label="산업군 필터">
+            <option value="all">전체 산업군</option>
+            <option value="패션">패션</option>
+            <option value="뷰티">뷰티</option>
+            <option value="인테리어">인테리어</option>
+            <option value="테크">테크</option>
+            <option value="식음료">식음료</option>
+            <option value="스포츠">스포츠</option>
+          </select>
+          <input id="searchInput" aria-label="기업 검색" placeholder="기업명 또는 키워드 검색">
+        </div>
+      </div>
+
+      <section class="metrics" aria-label="요약 지표">
+        <div class="metric"><strong id="metricHot">0</strong><span>80점 이상 우선 컨택</span></div>
+        <div class="metric"><strong id="metricContacts">0</strong><span>연락처 확인 기업</span></div>
+        <div class="metric"><strong id="metricWinback">0</strong><span>재구독 추천 기업</span></div>
+        <div class="metric"><strong id="metricValue">0억</strong><span>예상 파이프라인</span></div>
+      </section>
+
+      <section id="cardView" class="grid"></section>
+      <section id="contactView" class="hidden"></section>
+    </main>
+  </div>
+
+  <script>
+    const accounts = [
+      {
+        company: "Lumiere Beauty",
+        industry: "뷰티",
+        type: "lookalike",
+        score: 91,
+        pipeline: 1.8,
+        similar: "프리미엄 스킨케어 구독 고객군",
+        reason: "신규 클린뷰티 라인 출시와 일본 유통 확대가 동시에 진행 중입니다.",
+        signal: "신제품 후기 증가, 브랜드 리뉴얼, 상품기획 채용",
+        contact: "김서연 / Brand Strategy Lead / 이메일 보유",
+        action: "2027 뷰티 컬러와 패키징 트렌드 샘플을 활용해 브랜드 리뉴얼 미팅 제안",
+        source: "마케팅 리드풀",
+        owner: "Jina"
+      },
+      {
+        company: "Arc Atelier",
+        industry: "인테리어",
+        type: "lookalike",
+        score: 83,
+        pipeline: 1.2,
+        similar: "라이프스타일 리빙 구독 고객군",
+        reason: "호텔/리테일 공간 프로젝트가 늘고 있으며 소재 트렌드 수요가 높습니다.",
+        signal: "상업공간 프로젝트 수주, 소재 큐레이션 콘텐츠 강화",
+        contact: "박민재 / Creative Director / 전화 보유",
+        action: "공간 소재와 컬러 트렌드 기반으로 프로젝트 초기 기획 워크숍 제안",
+        source: "리멤버 명함풀",
+        owner: "Min"
+      },
+      {
+        company: "Northline Sports",
+        industry: "스포츠",
+        type: "winback",
+        score: 88,
+        pipeline: 2.4,
+        similar: "과거 스포츠웨어 구독 고객",
+        reason: "해지 후 18개월이 지났고 신규 러닝 라인 매출이 빠르게 성장했습니다.",
+        signal: "2개 분기 연속 매출 증가, 러닝 팝업 흥행, 해외 편집숍 입점",
+        contact: "이하준 / Product Planning Manager / 이메일 보유",
+        action: "과거 이용 부서에 글로벌 액티브웨어 트렌드 업데이트 미팅 제안",
+        source: "CRM 과거 담당자",
+        owner: "Yuna"
+      },
+      {
+        company: "Brew & Field",
+        industry: "식음료",
+        type: "lookalike",
+        score: 74,
+        pipeline: 0.9,
+        similar: "프리미엄 F&B 브랜드 고객군",
+        reason: "패키징 리뉴얼과 RTD 제품 확장을 준비 중입니다.",
+        signal: "신제품 티저, 편의점 채널 확대, 패키지 디자이너 채용",
+        contact: "최유리 / Marketing Manager / 이메일 보유",
+        action: "소비자 라이프스타일과 컬러/패키징 트렌드 중심의 캠페인 후속 제안",
+        source: "마케팅 웨비나",
+        owner: "Jina"
+      },
+      {
+        company: "Modeframe",
+        industry: "패션",
+        type: "winback",
+        score: 79,
+        pipeline: 1.6,
+        similar: "과거 여성복 구독 고객",
+        reason: "흑자전환 이후 신규 컨템포러리 라인을 론칭했습니다.",
+        signal: "흑자전환, 신규 라인 출시, 해외 쇼룸 참가",
+        contact: "정다은 / Merchandising Director / 전화 보유",
+        action: "재구독보다 낮은 진입장벽의 컨설팅 세션으로 재관계 형성",
+        source: "리멤버 명함풀",
+        owner: "Min"
+      },
+      {
+        company: "Nexa Home Lab",
+        industry: "테크",
+        type: "lookalike",
+        score: 68,
+        pipeline: 1.1,
+        similar: "스마트홈/가전 구독 고객군",
+        reason: "가전 제품에 CMF와 라이프스타일 인사이트를 반영하려는 움직임이 있습니다.",
+        signal: "제품 디자이너 채용, 스마트홈 신제품 개발 발표",
+        contact: "담당자 미확인",
+        action: "제품디자인 또는 UX 리서치 조직 담당자 탐색 후 웜업 캠페인 등록",
+        source: "없음",
+        owner: "TBD"
+      }
+    ];
+
+    const views = {
+      recommend: {
+        title: "이번 달 추천",
+        caption: "점수와 컨택 가능성을 기준으로 이번 달 우선 연락할 기업을 정렬했습니다.",
+        types: ["lookalike", "winback"]
+      },
+      lookalike: {
+        title: "유사 기업 발굴",
+        caption: "현재 구독 고객과 닮은 산업군, 제품 주기, 시장 확장 단계의 기업입니다.",
+        types: ["lookalike"]
+      },
+      winback: {
+        title: "재구독 기회",
+        caption: "해지 고객 중 긍정적인 사업 신호가 감지된 기업입니다.",
+        types: ["winback"]
+      },
+      contacts: {
+        title: "담당자 매칭",
+        caption: "추천 기업 중 내부 리드풀 또는 명함풀에 연락 가능한 담당자가 있는지 확인합니다.",
+        types: ["lookalike", "winback"]
+      },
+      automation: {
+        title: "자동 신호 수집",
+        caption: "뉴스, PR, 공시, 재무 API를 월 1회 확인해 세일즈 기회를 자동 생성합니다.",
+        types: ["lookalike", "winback"]
+      }
+    };
+
+    let activeView = "recommend";
+
+    const scoreClass = score => score >= 80 ? "high" : score >= 65 ? "mid" : "watch";
+    const hasContact = account => !account.contact.includes("미확인");
+
+    function getFilteredAccounts() {
+      const industry = document.getElementById("industryFilter").value;
+      const search = document.getElementById("searchInput").value.trim().toLowerCase();
+      const allowedTypes = views[activeView].types;
+
+      return accounts
+        .filter(account => allowedTypes.includes(account.type))
+        .filter(account => industry === "all" || account.industry === industry)
+        .filter(account => {
+          const text = `${account.company} ${account.industry} ${account.reason} ${account.signal} ${account.contact}`.toLowerCase();
+          return !search || text.includes(search);
+        })
+        .sort((a, b) => b.score - a.score);
+    }
+
+    function renderMetrics(list) {
+      document.getElementById("metricHot").textContent = list.filter(account => account.score >= 80).length;
+      document.getElementById("metricContacts").textContent = list.filter(hasContact).length;
+      document.getElementById("metricWinback").textContent = list.filter(account => account.type === "winback").length;
+      document.getElementById("metricValue").textContent = `${list.reduce((sum, account) => sum + account.pipeline, 0).toFixed(1)}억`;
+    }
+
+    function renderCards(list) {
+      const cardView = document.getElementById("cardView");
+      const contactView = document.getElementById("contactView");
+      cardView.classList.remove("hidden");
+      contactView.classList.add("hidden");
+
+      if (!list.length) {
+        cardView.innerHTML = `<div class="empty">조건에 맞는 기업이 없습니다.</div>`;
+        return;
+      }
+
+      cardView.innerHTML = list.map(account => `
+        <article class="card">
+          <div class="row">
+            <div>
+              <div class="company">${account.company}</div>
+              <div class="tagline">${account.industry} · ${account.type === "winback" ? "재구독 기회" : "신규 유사 기업"}</div>
+            </div>
+            <div class="score ${scoreClass(account.score)}">${account.score}</div>
+          </div>
+          <div class="pillrow">
+            <span class="pill">${account.similar}</span>
+            <span class="pill">예상 ${account.pipeline.toFixed(1)}억</span>
+            <span class="pill">${account.source}</span>
+          </div>
+          <div>
+            <div class="section-title">추천 이유</div>
+            <p class="bodytext">${account.reason}</p>
+          </div>
+          <div>
+            <div class="section-title">감지 신호</div>
+            <p class="bodytext">${account.signal}</p>
+          </div>
+          <div>
+            <div class="section-title">담당자</div>
+            <p class="bodytext">${account.contact}</p>
+          </div>
+          <div class="action">
+            <div class="section-title">추천 액션</div>
+            <p class="bodytext">${account.action}</p>
+            <button class="cta">세일즈 태스크 생성</button>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderContacts(list) {
+      const cardView = document.getElementById("cardView");
+      const contactView = document.getElementById("contactView");
+      cardView.classList.add("hidden");
+      contactView.classList.remove("hidden");
+
+      if (!list.length) {
+        contactView.innerHTML = `<div class="empty">조건에 맞는 담당자 매칭 결과가 없습니다.</div>`;
+        return;
+      }
+
+      contactView.innerHTML = `
+        <table class="table">
+          <thead>
+            <tr>
+              <th>기업</th>
+              <th>산업군</th>
+              <th>담당자</th>
+              <th>출처</th>
+              <th>추천 액션</th>
+              <th>담당 세일즈</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${list.map(account => `
+              <tr>
+                <td><strong>${account.company}</strong><br>${account.score}점 · 예상 ${account.pipeline.toFixed(1)}억</td>
+                <td>${account.industry}</td>
+                <td>${account.contact}</td>
+                <td>${account.source}</td>
+                <td>${account.action}</td>
+                <td>${account.owner}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderAutomation(list) {
+      const cardView = document.getElementById("cardView");
+      const contactView = document.getElementById("contactView");
+      cardView.classList.add("hidden");
+      contactView.classList.remove("hidden");
+
+      const monitoredCount = list.length;
+      const financialCount = list.filter(account => ["패션", "뷰티", "스포츠", "테크"].includes(account.industry)).length;
+      const matchedCount = list.filter(hasContact).length;
+
+      contactView.innerHTML = `
+        <div class="pipeline">
+          <section class="panel">
+            <h2>월간 자동 수집 흐름</h2>
+            <div class="steps">
+              <div class="step">
+                <div class="stepnum">1</div>
+                <div>
+                  <strong>대상 기업 확정</strong>
+                  <p class="bodytext">현재 고객, 해지 고객, 추천 후보 기업을 합치고 기업명/브랜드명을 정규화합니다.</p>
+                </div>
+                <span class="status">준비됨</span>
+              </div>
+              <div class="step">
+                <div class="stepnum">2</div>
+                <div>
+                  <strong>뉴스/PR 탐색</strong>
+                  <p class="bodytext">최근 30~45일의 신제품, 매출 증가, 흑자전환, 투자, 해외 진출, 유통 확대 뉴스를 찾습니다.</p>
+                </div>
+                <span class="status needs">API 키 필요</span>
+              </div>
+              <div class="step">
+                <div class="stepnum">3</div>
+                <div>
+                  <strong>공시/재무 확인</strong>
+                  <p class="bodytext">상장사는 OpenDART 등 공식 API로 재무제표, 사업보고서, 주요 재무지표를 확인합니다.</p>
+                </div>
+                <span class="status needs">API 키 필요</span>
+              </div>
+              <div class="step">
+                <div class="stepnum">4</div>
+                <div>
+                  <strong>긍정 신호 분류</strong>
+                  <p class="bodytext">단순 언급은 제외하고 WGSN 구매 가능성과 연결되는 사업 확장 신호만 남깁니다.</p>
+                </div>
+                <span class="status">준비됨</span>
+              </div>
+              <div class="step">
+                <div class="stepnum">5</div>
+                <div>
+                  <strong>담당자 매칭과 액션 추천</strong>
+                  <p class="bodytext">리드풀/명함풀 담당자를 찾아 이메일, 전화, 웨비나 후속, 재구독 미팅 액션을 생성합니다.</p>
+                </div>
+                <span class="status">준비됨</span>
+              </div>
+              <div class="step">
+                <div class="stepnum">6</div>
+                <div>
+                  <strong>월간 이메일 리포트 발송</strong>
+                  <p class="bodytext">세일즈 매니저에게는 본인 담당 추천 기업을, 리더에게는 전체 요약을 이메일로 보냅니다.</p>
+                </div>
+                <span class="status needs">메일 연동 필요</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>운영 설정</h2>
+            <div class="config-list">
+              <div class="config-item"><span>실행 주기</span><strong>매월 1회</strong></div>
+              <div class="config-item"><span>모니터링 기업</span><strong>${monitoredCount}개</strong></div>
+              <div class="config-item"><span>재무 확인 후보</span><strong>${financialCount}개</strong></div>
+              <div class="config-item"><span>컨택 가능 기업</span><strong>${matchedCount}개</strong></div>
+              <div class="config-item"><span>뉴스 검색</span><span class="mono">NAVER / Google</span></div>
+              <div class="config-item"><span>국내 공시</span><span class="mono">OpenDART</span></div>
+              <div class="config-item"><span>결과 저장</span><span class="mono">signals 자동 생성</span></div>
+              <div class="config-item"><span>세일즈 출력</span><span>기업별 추천 이유와 메시지 초안</span></div>
+              <div class="config-item"><span>이메일 발송</span><span class="mono">SMTP / Gmail / Outlook</span></div>
+              <div class="config-item"><span>수신자 설정</span><span class="mono">sales_recipients CSV</span></div>
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    function render() {
+      const config = views[activeView];
+      document.getElementById("pageTitle").textContent = config.title;
+      document.getElementById("pageCaption").textContent = config.caption;
+      const list = getFilteredAccounts();
+      renderMetrics(list);
+      if (activeView === "contacts") renderContacts(list);
+      else if (activeView === "automation") renderAutomation(list);
+      else renderCards(list);
+    }
+
+    document.querySelectorAll(".nav button").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".nav button").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        activeView = button.dataset.view;
+        render();
+      });
+    });
+
+    document.getElementById("industryFilter").addEventListener("change", render);
+    document.getElementById("searchInput").addEventListener("input", render);
+    render();
+  </script>
+</body>
+</html>

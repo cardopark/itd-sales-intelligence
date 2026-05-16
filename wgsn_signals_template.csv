@@ -1,0 +1,4 @@
+company_name,signal_date,signal_type,source_name,source_url,summary,sentiment,business_impact
+Northline Sports,2026-05-03,매출 증가,News,https://example.com,러닝 라인 매출이 2개 분기 연속 증가,positive,상품기획/R&D 예산 재확대 가능성
+Modeframe,2026-05-07,흑자전환,IR,https://example.com,전년 대비 영업이익 개선과 신규 라인 출시,positive,재구독 검토 가능성
+Brew & Field,2026-05-11,신제품 출시,PR,https://example.com,RTD 신제품 출시와 편의점 채널 확대,positive,패키징/소비자 트렌드 니즈 가능성

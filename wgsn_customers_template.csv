@@ -1,0 +1,4 @@
+company_name,status,industry,country,segment,contract_value,start_date,end_date,churn_date,churn_reason,account_owner,known_use_case
+Lumiere Beauty,active,뷰티,Korea,Premium Beauty,180000000,2025-03-01,2026-02-28,,,Jina,컬러/패키징 트렌드 리서치
+Northline Sports,churned,스포츠,Korea,Sportswear,240000000,2023-01-01,2023-12-31,2024-01-31,예산 축소,Yuna,액티브웨어 상품기획
+Modeframe,churned,패션,Korea,Contemporary Fashion,160000000,2022-09-01,2023-08-31,2023-09-30,조직 개편,Min,시즌 트렌드/머천다이징
